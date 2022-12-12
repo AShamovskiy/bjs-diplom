@@ -17,14 +17,34 @@ ApiConnector.current ((response) => {
 
 const ratesBoard = new RatesBoard;
 
-setInterval(function getRatesBoard () {
+function getRatesBoard () {
    ApiConnector.getStocks((response) => {
       if (response.success === true){ 
          ratesBoard.clearTable();
          ratesBoard.fillTable(response.data);
       }; 
    })
-}, 1000);
+}
+
+function decorator () {
+   getRatesBoard ()
+   setInterval(() => {
+         getRatesBoard ();
+   }, 60000);
+}      
+   
+decorator ()
+
+
+
+// setInterval(function getRatesBoard () {
+//    ApiConnector.getStocks((response) => {
+//       if (response.success === true){ 
+//          ratesBoard.clearTable();
+//          ratesBoard.fillTable(response.data);
+//       }; 
+//    })
+// }, 1000);
 
 const moneyManager = new MoneyManager;
 
@@ -32,7 +52,7 @@ moneyManager.addMoneyCallback = (data) => {
    ApiConnector.addMoney(data, (response) => {
       if (response.success === true){ 
          ProfileWidget.showProfile(response.data);
-         moneyManager.setMessage(true, response.success);
+         moneyManager.setMessage(true, "Баланс пополнен");
       } else {
          moneyManager.setMessage(false, response.error);
       };
@@ -43,7 +63,7 @@ moneyManager.conversionMoneyCallback = (data) => {
    ApiConnector.convertMoney(data, (response) => {
       if (response.success === true){ 
          ProfileWidget.showProfile(response.data);
-         moneyManager.setMessage(true, response.success);
+         moneyManager.setMessage(true, "Введенная сумма конвертированна");
       } else {
          moneyManager.setMessage(false, response.error);
       }
@@ -54,7 +74,7 @@ moneyManager.sendMoneyCallback = (data) => {
    ApiConnector.transferMoney(data, (response) => {
       if (response.success === true){ 
          ProfileWidget.showProfile(response.data);
-         moneyManager.setMessage(true, response.success);
+         moneyManager.setMessage(true, "Перевод средств успешно проведен");
       } else {
          moneyManager.setMessage(false, response.error);
       }
@@ -77,7 +97,7 @@ favoritesWidget.addUserCallback = (data) => {
          favoritesWidget.clearTable();
          favoritesWidget.fillTable(response.data);
          moneyManager.updateUsersList(response.data);
-         favoritesWidget.setMessage(true, response.success);
+         favoritesWidget.setMessage(true, "Пользователь добавлен");
       } else {
          favoritesWidget.setMessage(false, response.error);
       }
@@ -90,7 +110,7 @@ favoritesWidget.removeUserCallback = (data) => {
          favoritesWidget.clearTable();
          favoritesWidget.fillTable(response.data);
          moneyManager.updateUsersList(response.data);
-         favoritesWidget.setMessage(true, response.success);
+         favoritesWidget.setMessage(true, "выбранный пользователь удален");
       } else {
          favoritesWidget.setMessage(false, response.error);
       }
